@@ -1,0 +1,74 @@
+<odoo>
+    <record id="stock_containers_tree_view" model="ir.ui.view">
+        <field name="name">stock.containers.tree.view</field>
+        <field name="model">stock.containers</field>
+        <field name="arch" type="xml">
+            <tree string="الحاويات">
+                <field name="number"/>
+                <field name="name"/>
+                <field name="delivery_time"/>
+            </tree>
+        </field>
+    </record>
+    <record id="stock_containers_form_view" model="ir.ui.view">
+        <field name="name">stock.containers.form.view</field>
+        <field name="model">stock.containers</field>
+        <field name="arch" type="xml">
+            <form string="الحاويات">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="number" class="oe_edit_only"/>
+                        <h1>
+                            <field name="number"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <label for="delivery_time"/>
+                            <div>
+                                <field name="delivery_time" class="oe_inline"/>
+                                <span class="o_form_label oe_inline">&#160;Days</span>
+                            </div>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="stock_containers_action" model="ir.actions.act_window">
+        <field name="name">الحاويات</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.containers</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            لا يوجد حاويات معرفة حتى الان
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+          </p>
+        </field>
+    </record>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="stock_containers_action_menuitem" parent="stock.menu_stock_config_settings" action="stock_containers_action" sequence="10"/>
+    <record id="stock_picking_container_inherit" model="ir.ui.view">
+        <field name="name">stock.picking.container.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="container_id"/>
+                <label for="delivery_time"/>
+                <div>
+                    <field name="delivery_time" class="oe_inline"/>
+                    <span class="o_form_label oe_inline">&#160;أيام</span>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
