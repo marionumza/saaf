@@ -132,17 +132,17 @@ class CustomerDeliveryReport(models.TransientModel):
             invoice_ids = self.env['account.move'].sudo().search([('id','in',so.invoice_ids.ids)],limit=1)
             picking_domain= [('id','in',so.picking_ids.ids),]
             if self.vehicle_id:
-                picking_domain.append('|',)
+                # picking_domain.append('|',)
                 picking_domain.append(('vehicle_id', 'in', self.vehicle_id.ids), )
-                picking_domain.append(('vehicle_id', '=',False), )
+                # picking_domain.append(('vehicle_id', '=',False), )
             if self.driver_id:
-                picking_domain.append('|', )
+                # picking_domain.append('|', )
                 picking_domain.append(('driver_id', 'in', self.driver_id.ids), )
-                picking_domain.append(('driver_id', '=', False), )
+                # picking_domain.append(('driver_id', '=', False), )
             if self.container_id:
-                picking_domain.append('|', )
+                # picking_domain.append('|', )
                 picking_domain.append(('container_id', 'in', self.container_id.ids), )
-                picking_domain.append(('container_id', '=', False), )
+                # picking_domain.append(('container_id', '=', False), )
 
             picking_ids = self.env['stock.picking'].sudo().search(picking_domain)
             for picking in picking_ids:
