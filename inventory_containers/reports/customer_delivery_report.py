@@ -24,6 +24,7 @@ class CustomerDeliveryReport(models.TransientModel):
     vehicle_id = fields.Many2many(comodel_name="fleet.vehicle", string="السيارة",relation="vehicle_id_rel", column1="vehicle_id_col1",column2="vehicle_id_col2")
     driver_id = fields.Many2many(comodel_name="res.partner", string="السواق",relation="driver_id_rel", column1="driver_id_col1",column2="driver_id_col2")
     container_id = fields.Many2many(comodel_name="stock.containers", string="رقم الحاوية",relation="container_id_rel", column1="container_id_col1",column2="container_id_col2")
+    service_number = fields.Char(string="رقم الخدمة", required=False )
     filename = fields.Char(string='File Name', size=64)
     excel_file = fields.Binary(string='Report File')
 
@@ -122,12 +123,13 @@ class CustomerDeliveryReport(models.TransientModel):
         worksheet.write(row-1, column+5, 'سواق', cell_heading_format)
         worksheet.write(row-1, column+6, 'حاوية رقم', cell_heading_format)
         worksheet.write(row-1, column+7, 'مدة الإيجار', cell_heading_format)
-        worksheet.write(row-1, column+8, 'تاريخ التوصيل', cell_heading_format)
-        worksheet.write(row-1, column+9, 'رقم الفاتورة', cell_heading_format)
-        worksheet.write(row-1, column+10, 'تاريخ الفاتورة', cell_heading_format)
-        worksheet.write(row-1, column+11, 'المنتج', cell_heading_format)
-        worksheet.write(row-1, column+12, 'محجوز', cell_heading_format)
-        worksheet.write(row-1, column+13, 'تم', cell_heading_format)
+        worksheet.write(row-1, column+8, 'رقم الخدمة', cell_heading_format)
+        worksheet.write(row-1, column+9, 'تاريخ التوصيل', cell_heading_format)
+        worksheet.write(row-1, column+10, 'رقم الفاتورة', cell_heading_format)
+        worksheet.write(row-1, column+11, 'تاريخ الفاتورة', cell_heading_format)
+        worksheet.write(row-1, column+12, 'المنتج', cell_heading_format)
+        worksheet.write(row-1, column+13, 'محجوز', cell_heading_format)
+        worksheet.write(row-1, column+14, 'تم', cell_heading_format)
         for so in so_records:
             invoice_ids = self.env['account.move'].sudo().search([('id','in',so.invoice_ids.ids)],limit=1)
             picking_domain= [('id','in',so.picking_ids.ids),]
@@ -143,6 +145,10 @@ class CustomerDeliveryReport(models.TransientModel):
                 # picking_domain.append('|', )
                 picking_domain.append(('container_id', 'in', self.container_id.ids), )
                 # picking_domain.append(('container_id', '=', False), )
+            if self.service_number:
+                # picking_domain.append('|', )
+                picking_domain.append(('service_number', '=', self.service_number), )
+                # picking_domain.append(('container_id', '=', False), )
 
             picking_ids = self.env['stock.picking'].sudo().search(picking_domain)
             for picking in picking_ids:
@@ -156,12 +162,13 @@ class CustomerDeliveryReport(models.TransientModel):
                         worksheet.write(row, column+5, picking.driver_id.name, cell_data_format)
                         worksheet.write(row, column+6, picking.container_id.name, cell_data_format)
                         worksheet.write(row, column+7, picking.delivery_time, cell_data_format)
-                        worksheet.write(row, column+8, picking.date_done.strftime(DF) if picking.date_done else '-', cell_data_format)
-                        worksheet.write(row, column+9, invoice_ids.name if invoice_ids else '-', cell_data_format)
-                        worksheet.write(row, column+10,invoice_ids.invoice_date.strftime(DF) if invoice_ids else '-', cell_data_format)
-                        worksheet.write(row, column+11, line.product_id.display_name, cell_data_format)
-                        worksheet.write(row, column+12, line.product_uom_qty, cell_data_format)
-                        worksheet.write(row, column+13, line.qty_done, cell_data_format)
+                        worksheet.write(row, column+8, picking.service_number, cell_data_format)
+                        worksheet.write(row, column+9, picking.date_done.strftime(DF) if picking.date_done else '-', cell_data_format)
+                        worksheet.write(row, column+10, invoice_ids.name if invoice_ids else '-', cell_data_format)
+                        worksheet.write(row, column+11,invoice_ids.invoice_date.strftime(DF) if invoice_ids else '-', cell_data_format)
+                        worksheet.write(row, column+12, line.product_id.display_name, cell_data_format)
+                        worksheet.write(row, column+13, line.product_uom_qty, cell_data_format)
+                        worksheet.write(row, column+14, line.qty_done, cell_data_format)
                         total_reserved += line.product_uom_qty
                         total_done += line.qty_done
                         row += 1
@@ -174,17 +181,18 @@ class CustomerDeliveryReport(models.TransientModel):
                     worksheet.write(row, column + 5, picking.driver_id.name, cell_data_format)
                     worksheet.write(row, column + 6, picking.container_id.name, cell_data_format)
                     worksheet.write(row, column + 7, picking.delivery_time, cell_data_format)
-                    worksheet.write(row, column + 8, picking.date_done.strftime(DF) if picking.date_done else '-', cell_data_format)
-                    worksheet.write(row, column + 9, invoice_ids.name if invoice_ids else '-', cell_data_format)
-                    worksheet.write(row, column + 10, invoice_ids.invoice_date.strftime(DF) if invoice_ids else '-', cell_data_format)
-                    worksheet.write(row, column + 11, '', cell_data_format)
+                    worksheet.write(row, column + 8, picking.service_number, cell_data_format)
+                    worksheet.write(row, column + 9, picking.date_done.strftime(DF) if picking.date_done else '-', cell_data_format)
+                    worksheet.write(row, column + 10, invoice_ids.name if invoice_ids else '-', cell_data_format)
+                    worksheet.write(row, column + 11, invoice_ids.invoice_date.strftime(DF) if invoice_ids else '-', cell_data_format)
                     worksheet.write(row, column + 12, '', cell_data_format)
                     worksheet.write(row, column + 13, '', cell_data_format)
+                    worksheet.write(row, column + 14, '', cell_data_format)
                     row += 1
 
-        worksheet.merge_range('A%s:L%s' % (row+1, row+1), 'المجموع',cell_heading_format)
-        worksheet.write(row, column+12, total_reserved, cell_amount_format)
-        worksheet.write(row, column+13, total_done, cell_amount_format)
+        worksheet.merge_range('A%s:M%s' % (row+1, row+1), 'المجموع',cell_heading_format)
+        worksheet.write(row, column+13, total_reserved, cell_amount_format)
+        worksheet.write(row, column+14, total_done, cell_amount_format)
         worksheet.right_to_left()
         # except Exception as e:
         #     raise ValidationError(_('You are not able to print this report please contact your'

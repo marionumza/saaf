@@ -43,6 +43,7 @@ class StockPicking(models.Model):
     driver_id = fields.Many2one(related='vehicle_id.driver_id',comodel_name="res.partner", string="السواق",store=True, required=False,readonly=False,copy=False )
     container_id = fields.Many2one(comodel_name="stock.containers", string="رقم الحاوية", required=False,ondelete='restrict',copy=False )
     delivery_time = fields.Integer(related='container_id.delivery_time',string="مدة الايجار", required=False,readonly=False,store=True, )
+    service_number = fields.Char(string="رقم الخدمة", required=False )
 
 
 

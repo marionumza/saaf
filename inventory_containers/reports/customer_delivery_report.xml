@@ -30,6 +30,7 @@
                             <field name="vehicle_id" options="{'no_create': True, 'no_open': True}" widget="many2many_tags"/>
                             <field name="driver_id" options="{'no_create': True, 'no_open': True}" widget="many2many_tags"/>
                             <field name="container_id" options="{'no_create': True, 'no_open': True}" widget="many2many_tags"/>
+                            <field name="service_number"/>
                         </group>
                     </group>
                     <group invisible="1">
