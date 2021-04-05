@@ -51,6 +51,7 @@ class StockPicking(models.Model):
         for rec in self:
             for container in self.container_id:
                 rec.delivery_time = container.delivery_time
+
     @api.constrains("service_number")
     def related_service_number(self):
         for rec in self:
