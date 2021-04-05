@@ -145,14 +145,53 @@ class CustomerDeliveryReport(models.TransientModel):
                 # picking_domain.append('|', )
                 picking_domain.append(('container_id', 'in', self.container_id.ids), )
                 # picking_domain.append(('container_id', '=', False), )
-            if self.service_number:
-                # picking_domain.append('|', )
-                picking_domain.append(('service_number', '=', self.service_number), )
-                # picking_domain.append(('container_id', '=', False), )
+            # if self.service_number:
+            #     # picking_domain.append('|', )
+            #     picking_domain.append(('service_number', '=', self.service_number), )
+            #     # picking_domain.append(('container_id', '=', False), )
 
             picking_ids = self.env['stock.picking'].sudo().search(picking_domain)
             for picking in picking_ids:
-                if picking.move_line_ids_without_package:
+                if self.service_number :
+                    if picking.service_number in picking.service_number:
+                        if picking.move_line_ids_without_package:
+                            for line in picking.move_line_ids_without_package:
+                                worksheet.write(row, column, so.partner_id.display_name, cell_data_format)
+                                worksheet.write(row, column + 1, so.name, cell_data_format)
+                                worksheet.write(row, column + 2, picking.name, cell_data_format)
+                                worksheet.write(row, column + 3, picking.partner_id.display_name, cell_data_format)
+                                worksheet.write(row, column + 4, ', '.join(picking.vehicle_id.mapped('name')),cell_data_format)
+                                worksheet.write(row, column + 5, ', '.join(picking.driver_id.mapped('name')),cell_data_format)
+                                worksheet.write(row, column + 6, ', '.join(picking.container_id.mapped('name')),cell_data_format)
+                                worksheet.write(row, column + 7, picking.delivery_time, cell_data_format)
+                                worksheet.write(row, column + 8, picking.service_number, cell_data_format)
+                                worksheet.write(row, column + 9,picking.date_done.strftime(DF) if picking.date_done else '-',cell_data_format)
+                                worksheet.write(row, column + 10, invoice_ids.name if invoice_ids else '-',cell_data_format)
+                                worksheet.write(row, column + 11,invoice_ids.invoice_date.strftime(DF) if invoice_ids and invoice_ids.invoice_date else '-',cell_data_format)
+                                worksheet.write(row, column + 12, line.product_id.display_name, cell_data_format)
+                                worksheet.write(row, column + 13, line.product_uom_qty, cell_data_format)
+                                worksheet.write(row, column + 14, line.qty_done, cell_data_format)
+                                total_reserved += line.product_uom_qty
+                                total_done += line.qty_done
+                                row += 1
+                        else:
+                            worksheet.write(row, column, so.partner_id.display_name, cell_data_format)
+                            worksheet.write(row, column + 1, so.name, cell_data_format)
+                            worksheet.write(row, column + 2, picking.name, cell_data_format)
+                            worksheet.write(row, column + 3, picking.partner_id.display_name, cell_data_format)
+                            worksheet.write(row, column + 4, ', '.join(picking.vehicle_id.mapped('name')),cell_data_format)
+                            worksheet.write(row, column + 5, ', '.join(picking.driver_id.mapped('name')),cell_data_format)
+                            worksheet.write(row, column + 6, ', '.join(picking.container_id.mapped('name')),cell_data_format)
+                            worksheet.write(row, column + 7, picking.delivery_time, cell_data_format)
+                            worksheet.write(row, column + 8, picking.service_number, cell_data_format)
+                            worksheet.write(row, column + 9,picking.date_done.strftime(DF) if picking.date_done else '-',cell_data_format)
+                            worksheet.write(row, column + 10, invoice_ids.name if invoice_ids else '-',cell_data_format)
+                            worksheet.write(row, column + 11,invoice_ids.invoice_date.strftime(DF) if invoice_ids and invoice_ids.invoice_date else '-',cell_data_format)
+                            worksheet.write(row, column + 12, '', cell_data_format)
+                            worksheet.write(row, column + 13, '', cell_data_format)
+                            worksheet.write(row, column + 14, '', cell_data_format)
+                            row += 1
+                elif picking.move_line_ids_without_package:
                     for line in picking.move_line_ids_without_package:
                         worksheet.write(row, column, so.partner_id.display_name, cell_data_format)
                         worksheet.write(row, column + 1, so.name, cell_data_format)
@@ -165,7 +204,7 @@ class CustomerDeliveryReport(models.TransientModel):
                         worksheet.write(row, column+8, picking.service_number, cell_data_format)
                         worksheet.write(row, column+9, picking.date_done.strftime(DF) if picking.date_done else '-', cell_data_format)
                         worksheet.write(row, column+10, invoice_ids.name if invoice_ids else '-', cell_data_format)
-                        worksheet.write(row, column+11,invoice_ids.invoice_date.strftime(DF) if invoice_ids else '-', cell_data_format)
+                        worksheet.write(row, column+11,invoice_ids.invoice_date.strftime(DF) if invoice_ids and invoice_ids.invoice_date else '-', cell_data_format)
                         worksheet.write(row, column+12, line.product_id.display_name, cell_data_format)
                         worksheet.write(row, column+13, line.product_uom_qty, cell_data_format)
                         worksheet.write(row, column+14, line.qty_done, cell_data_format)
@@ -184,7 +223,7 @@ class CustomerDeliveryReport(models.TransientModel):
                     worksheet.write(row, column + 8, picking.service_number, cell_data_format)
                     worksheet.write(row, column + 9, picking.date_done.strftime(DF) if picking.date_done else '-', cell_data_format)
                     worksheet.write(row, column + 10, invoice_ids.name if invoice_ids else '-', cell_data_format)
-                    worksheet.write(row, column + 11, invoice_ids.invoice_date.strftime(DF) if invoice_ids else '-', cell_data_format)
+                    worksheet.write(row, column + 11, invoice_ids.invoice_date.strftime(DF) if invoice_ids and invoice_ids.invoice_date else '-', cell_data_format)
                     worksheet.write(row, column + 12, '', cell_data_format)
                     worksheet.write(row, column + 13, '', cell_data_format)
                     worksheet.write(row, column + 14, '', cell_data_format)
