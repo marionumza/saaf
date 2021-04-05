@@ -152,8 +152,8 @@ class CustomerDeliveryReport(models.TransientModel):
 
             picking_ids = self.env['stock.picking'].sudo().search(picking_domain)
             for picking in picking_ids:
-                if self.service_number :
-                    if picking.service_number in picking.service_number:
+                if self.service_number:
+                    if picking.service_number and (self.service_number in picking.service_number):
                         if picking.move_line_ids_without_package:
                             for line in picking.move_line_ids_without_package:
                                 worksheet.write(row, column, so.partner_id.display_name, cell_data_format)
