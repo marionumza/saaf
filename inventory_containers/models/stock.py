@@ -58,6 +58,11 @@ class StockPicking(models.Model):
             if rec.service_number:
                 for inv in rec.sale_id.invoice_ids:
                     inv.ref = rec.service_number
+                for so in rec.sale_id:
+                    so.service_number = rec.service_number
+
+
+
 
 
 

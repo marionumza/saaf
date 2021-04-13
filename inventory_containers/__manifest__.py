@@ -26,6 +26,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/stock.xml',
+        'views/sale.xml',
         'reports/customer_delivery_report.xml',
     ],
 }

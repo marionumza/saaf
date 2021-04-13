@@ -1,0 +1,23 @@
+<odoo>
+    <record id="sale_order_form_view_inherit_inventory_containers" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.inventory_containers</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="service_number"/>
+            </field>
+        </field>
+    </record>
+    <record id="sale_order_search_view_inherit_diet" model="ir.ui.view">
+        <field name="name">sale.order.search.inherit.inventory_containers</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="service_number" string="رقم الخدمة" filter_domain="[('service_number', 'ilike', self)]"/>
+                <field name="partner_id" string="رقم الهاتف المحمول" filter_domain="[('partner_id.mobile', 'ilike', self)]"/>
+            </field>
+        </field>
+    </record>
+</odoo>
